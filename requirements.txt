@@ -1,0 +1,12 @@
+pymupdf
+Image
+easyocr
+transformers
+pytesseract
+torch
+pdf2image
+Pillow
+PyPDF2
+pdfminer.six
+numpy<2.0
+datasets
