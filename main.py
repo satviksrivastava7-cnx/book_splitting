@@ -1,98 +1,31 @@
-from transformers import LayoutLMForTokenClassification, LayoutLMTokenizer
-from datasets import Dataset
-import torch
-from PIL import Image, ImageDraw
-import pytesseract
+from app import run_app
 
-# Function to preprocess the image for LayoutLM
-def preprocess_image_layoutlm(image_path):
-    image = Image.open(image_path).convert("RGB")
-    return image
+if __name__ == "__main__":
+    run_app()
 
-# Function to extract text and layout information using Tesseract
-def extract_text_with_bbox(image):
-    ocr_data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
 
-    words = ocr_data['text']
-    bboxes = []
-    normalized_bboxes = []
-    for i in range(len(words)):
-        if words[i].strip():  # If the word is not empty
-            x, y, w, h = ocr_data['left'][i], ocr_data['top'][i], ocr_data['width'][i], ocr_data['height'][i]
-            bboxes.append([x, y, x + w, y + h])
+'''
+self.board_label = tk.Label(input_frame, text="Enter Board:", anchor="w")
+self.board_label.grid(row=6, column=0, padx=5, pady=10)
 
-    # Normalize bounding boxes
-    width, height = image.size
-    for bbox in bboxes:
-        normalized_bboxes.append([
-            bbox[0] / width,
-            bbox[1] / height,
-            bbox[2] / width,
-            bbox[3] / height
-        ])
+self.board_entry = tk.Entry(input_frame, width=50)
+self.board_entry.grid(row=6, column=1, padx=5, pady=10)
 
-    return ocr_data['text'], bboxes
+self.class_label = tk.Label(input_frame, text="Enter Class:", anchor="w")
+self.class_label.grid(row=7, column=0, padx=5, pady=10)
 
-# Function to extract index using LayoutLM and return annotated image
-def extract_index_with_layoutlm(image_path):
-    image = preprocess_image_layoutlm(image_path)
+self.class_entry = tk.Entry(input_frame, width=50)
+self.class_entry.grid(row=7, column=1, padx=5, pady=10)
 
-    # Load LayoutLM model and tokenizer
-    model = LayoutLMForTokenClassification.from_pretrained("microsoft/layoutlm-base-uncased")
-    tokenizer = LayoutLMTokenizer.from_pretrained("microsoft/layoutlm-base-uncased")
+self.subject_label = tk.Label(input_frame, text="Enter Subject:", anchor="w")
+self.subject_label.grid(row=8, column=0, padx=5, pady=10)
 
-    # Extract OCR text and bounding boxes
-    words, bboxes = extract_text_with_bbox(image)
+self.subject_entry = tk.Entry(input_frame, width=50)
+self.subject_entry.grid(row=8, column=1, padx=5, pady=10)
 
-    # Tokenize input data
-    encoded_inputs = tokenizer(
-        words,
-        boxes=[[bbox[0], bbox[1], bbox[2], bbox[3]] for bbox in bboxes],
-        return_tensors="pt",
-        padding=True,
-        truncation=True
-    )
+self.book_name_label = tk.Label(input_frame, text="Enter Book Name:", anchor="w")
+self.book_name_label.grid(row=9, column=0, padx=5, pady=10)
 
-    # Get model predictions
-    outputs = model(**encoded_inputs)
-    predictions = torch.argmax(outputs.logits, dim=-1)
-
-    # Decode predictions and find chapters
-    chapters = []
-    current_chapter = {"Chapter Number": None, "Chapter Title": None, "Chapter Start Page": None}
-
-    # Create a drawing context for annotation
-    draw = ImageDraw.Draw(image)
-
-    for i, label in enumerate(predictions[0]):
-        token = tokenizer.decode(encoded_inputs.input_ids[0][i])
-        bbox = bboxes[i]
-        if label == 1:  # Chapter number
-            if current_chapter["Chapter Number"]:
-                chapters.append(current_chapter)
-                current_chapter = {"Chapter Number": None, "Chapter Title": None, "Chapter Start Page": None}
-
-            current_chapter["Chapter Number"] = token
-            draw.rectangle(bbox, outline="blue", width=2)
-        elif label == 2:  # Chapter title
-            current_chapter["Chapter Title"] = token
-            draw.rectangle(bbox, outline="green", width=2)
-        elif label == 3:  # Start page
-            current_chapter["Chapter Start Page"] = token
-            draw.rectangle(bbox, outline="red", width=2)
-
-    # Append last chapter if valid
-    if current_chapter["Chapter Number"]:
-        chapters.append(current_chapter)
-
-    # Save annotated image
-    annotated_image_path = image_path.replace(".png", "_annotated.png")
-    image.save(annotated_image_path)
-
-    return chapters, annotated_image_path
-
-# Example usage
-image_path = "/Users/satvik/Documents/Projects/Book_Splitter/images/book3.png"
-details, annotated_image_path = extract_index_with_layoutlm(image_path)
-print("Extracted Details:", details)
-print("Annotated Image Saved at:", annotated_image_path)
+self.book_name_entry = tk.Entry(input_frame, width=50)
+self.book_name_entry.grid(row=9, column=1, padx=5, pady=10)
+'''

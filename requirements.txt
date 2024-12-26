@@ -10,3 +10,6 @@ PyPDF2
 pdfminer.six
 numpy<2.0
 datasets
+pikepdf
+pybind11
+tkinter
