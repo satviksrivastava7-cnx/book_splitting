@@ -1,4 +1,4 @@
-## Book Curator
+## Content Curator
 
 This is python application is designed to preprocess and curate unstructured PDF books into structured JSON files, meanwhile maintaining the original structure of the book and splitting the content into chapter specific PDF files. This aims to be used for the data curation of the books, for the purpose of creating a structured dataset for the AI models to learn from, in regards to BrightClass AI.
 
